@@ -1,22 +1,15 @@
+require('./config/config.js');
+
 const express = require('express');
 const bodyParser = require('body-parser');
-const { db } = require('./db/mysql');
+const apiRoute = require('./routes/api.route');
 
 const app = express();
-const port = process.env.PORT || 3000;
+const port = process.env.PORT;
 
 app.use(bodyParser.json());
 
-app.get('/', (req, res) => {});
-
-/*
-
-  db.query('SELECT * from Teachers', (error, results) => {
-    if (error) throw error;
-    console.log(results);
-    
-  });
-*/
+app.use('/api', apiRoute);
 
 app.listen(port, () => {
   console.log(`Server started on ${port}`);
