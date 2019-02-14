@@ -48,7 +48,7 @@ class Student {
       db.query(input, (error, results) => {
         if (error) return reject(error);
 
-        if (results.length === 0) return reject(new Error('Email not found.'));
+        if (results.length === 0) return resolve();
 
         return resolve(results[0].sid);
       });

@@ -37,7 +37,7 @@ describe('Teacher model', () => {
 
   describe('#getID', () => {
     it('should throw error when email not found', async () => {
-      expect(teacher.getID()).rejects.toThrow('Email not found.');
+      expect(teacher.getID()).resolves.toBeUndefined();
     });
 
     it('should return teacher id', async () => {
