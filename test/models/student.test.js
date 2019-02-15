@@ -17,7 +17,7 @@ describe('Student model', () => {
     it('should throw error when invalid email format', () => {
       expect(() => {
         new Student('abc');
-      }).toThrow('Invalid email format.');
+      }).toThrow('Invalid email format');
     });
   });
 
@@ -26,12 +26,6 @@ describe('Student model', () => {
       await student.insert();
 
       expect((await dbQuery('SELECT * FROM Students')).length).toBe(1);
-    });
-
-    it('should throw error if duplicate inserted', async () => {
-      await student.insert();
-
-      expect(student.insert()).rejects.toThrow('Duplicate entry \'example@email.com\' for key \'email\'');
     });
   });
 

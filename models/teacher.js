@@ -10,7 +10,7 @@ class Teacher {
   }
 
   insert() {
-    const input = `INSERT INTO Teachers (email) VALUES ('${this.email}')`;
+    const input = `INSERT IGNORE INTO Teachers (email) VALUES ('${this.email}')`;
 
     return new Promise((resolve, reject) => {
       db.query(input, (error, results) => {

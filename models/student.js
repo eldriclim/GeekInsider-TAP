@@ -4,7 +4,7 @@ const { db } = require('./../db/mysql');
 
 class Student {
   constructor(email) {
-    if (!validator.isEmail(email)) throw new Error('Invalid email format.');
+    if (!validator.isEmail(email)) throw new Error(`Invalid email format: ${email}`);
 
     this.email = email;
   }
@@ -57,7 +57,7 @@ class Student {
 
 
   insert() {
-    const input = `INSERT INTO Students (email) VALUES ('${this.email}')`;
+    const input = `INSERT IGNORE INTO Students (email) VALUES ('${this.email}')`;
 
     return new Promise((resolve, reject) => {
       db.query(input, (error, results) => {
