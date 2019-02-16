@@ -1,4 +1,4 @@
-const { dbQuery } = require('./helper/db.helper');
+const { dbQuery } = require('./../db/mysql');
 
 const teachers = [
   't0@email.com',

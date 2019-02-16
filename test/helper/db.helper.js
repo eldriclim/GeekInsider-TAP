@@ -1,12 +1,4 @@
-const { db } = require('../../db/mysql');
-
-const dbQuery = input => new Promise((resolve, reject) => {
-  db.query(input, (error, results) => {
-    if (error) return reject(error);
-
-    return resolve(results);
-  });
-});
+const { dbQuery } = require('../../db/mysql');
 
 const dbDeleteTable = async (input) => {
   await dbQuery(`DELETE FROM ${input}`);
@@ -18,4 +10,4 @@ const dbCountTable = (input) => {
   });
 };
 
-module.exports = { db, dbQuery, dbDeleteTable, dbCountTable };
+module.exports = { dbDeleteTable, dbCountTable };

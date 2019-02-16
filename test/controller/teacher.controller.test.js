@@ -1,9 +1,13 @@
 const request = require('supertest');
 const expect = require('expect');
 
-const { dbQuery, dbDeleteTable, dbCountTable } = require('./../helper/db.helper');
+const { dbQuery } = require('./../../db/mysql');
+const { dbDeleteTable, dbCountTable } = require('./../helper/db.helper');
 const { teachers, students, populateTeachers, populateStudents, populateTeacherStudent } = require('./../seed');
 const app = require('./../../app');
+
+
+const invalidEmail = 'example.com';
 
 describe('Teacher controller', () => {
   describe('POST /api/register', () => {
@@ -49,7 +53,6 @@ describe('Teacher controller', () => {
       });
 
       it('should throw error when invalid teachers email', (done) => {
-        const invalidEmail = 'example.com';
         request(app)
           .post('/api/register')
           .send({
@@ -259,6 +262,86 @@ describe('Teacher controller', () => {
               done();
             });
         });
+      });
+    });
+  });
+
+  describe('POST /api/suspend', () => {
+    describe('invalid input format', () => {
+      it('should throw error if no student input', (done) => {
+        request(app)
+          .post('/api/suspend')
+          .send()
+          .expect(400)
+          .expect((res) => {
+            expect(res.body.message).toBe('Missing inputs');
+          })
+          .end(done);
+      });
+
+      it('should throw error if invalid student input', (done) => {
+        request(app)
+          .post('/api/suspend')
+          .send({
+            student: students
+          })
+          .expect(400)
+          .expect((res) => {
+            expect(res.body.message).toBe('Invalid student format');
+          })
+          .end(done);
+      });
+
+      it('should throw error if invalid email format', (done) => {
+        request(app)
+          .post('/api/suspend')
+          .send({
+            student: invalidEmail
+          })
+          .expect(400)
+          .expect((res) => {
+            expect(res.body.message).toBe(`Invalid email format: ${invalidEmail}`);
+          })
+          .end(done);
+      });
+    });
+
+    describe('valid input format', () => {
+      before(populateStudents);
+      after(async () => {
+        await dbDeleteTable('Students');
+      });
+
+      it('should throw error if student not found', (done) => {
+        request(app)
+          .post('/api/suspend')
+          .send({
+            student: 'example@email.com'
+          })
+          .expect(400)
+          .expect((res) => {
+            expect(res.body.message).toBe('No such student found');
+          })
+          .end(done);
+      });
+
+      it('should suspend student', (done) => {
+        request(app)
+          .post('/api/suspend')
+          .send({
+            student: students[0]
+          })
+          .expect(204)
+          .end(async (err) => {
+            if (err) return done(err);
+
+            const result = await dbQuery(`
+                SELECT isSuspend FROM Students
+                WHERE email = '${students[0]}'`);
+
+            expect(result[0].isSuspend).toBeTruthy();
+            done();
+          });
       });
     });
   });

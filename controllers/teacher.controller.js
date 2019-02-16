@@ -1,4 +1,4 @@
-const { db } = require('./../db/mysql');
+const { dbQuery } = require('./../db/mysql');
 const Teacher = require('./../models/teacher');
 const Student = require('./../models/student');
 
@@ -23,9 +23,7 @@ exports.register = async (req, res) => {
       INSERT IGNORE INTO Teacher_Student(tid, sid)
       VALUES ${pairs.join(',')}`;
 
-    db.query(input, (error, results) => {
-      if (error) throw error;
-
+    await dbQuery(input).then(() => {
       res.status(204).send();
     });
   } catch (error) {
@@ -59,8 +57,7 @@ exports.commonstudents = async (req, res) => {
       GROUP BY s.email
       HAVING COUNT(*) = ${tid.length}`;
 
-    db.query(input, (error, results) => {
-      if (error) throw error;
+    await dbQuery(input).then((results) => {
       common.students = results.map(row => row.email);
 
       res.status(200).send(common);
@@ -74,10 +71,28 @@ exports.commonstudents = async (req, res) => {
   }
 };
 
-exports.suspend = (req, res) => {
+exports.suspend = async (req, res) => {
+  try {
+    if (!req.body.student) throw new Error('Missing inputs');
 
+    if (typeof req.body.student !== 'string') throw new Error('Invalid student format');
+
+    const student = new Student(req.body.student);
+
+    if (!(await student.getID())) throw new Error('No such student found');
+
+    await student.setSuspend(true).then(() => {
+      res.status(204).send();
+    });
+  } catch (error) {
+    res
+      .status(400)
+      .send({
+        message: error.message
+      });
+  }
 };
 
 exports.retrievefornotifications = (req, res) => {
-
+    
 };

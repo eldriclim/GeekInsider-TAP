@@ -8,4 +8,12 @@ const db = mysql.createConnection({
   port: process.env.DB_PORT
 });
 
-module.exports = { db };
+const dbQuery = input => new Promise((resolve, reject) => {
+  db.query(input, (error, results) => {
+    if (error) return reject(error);
+
+    return resolve(results);
+  });
+});
+
+module.exports = { db, dbQuery };

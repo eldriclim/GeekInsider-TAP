@@ -1,6 +1,6 @@
 const expect = require('expect');
-
-const { dbQuery, dbDeleteTable, dbCountTable } = require('./../helper/db.helper');
+const { dbQuery } = require('./../../db/mysql');
+const { dbDeleteTable, dbCountTable } = require('./../helper/db.helper');
 const Student = require('./../../models/student');
 
 const student = new Student('example@email.com');
