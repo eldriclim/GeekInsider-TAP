@@ -9,7 +9,7 @@ MySQL 5 or greater is also required.
 
 ## Setting up
 
-To setup the environment, you have to first create a database and run [`SQL/createTable.sql`](https://github.com/eldriclim/GeekInsider-TAP/blob/master/admin/sql/createTable.sql) to create the tables.
+To setup the environment, you have to first create a database and run [`admin/sql/createTable.sql`](https://github.com/eldriclim/GeekInsider-TAP/blob/master/admin/sql/createTable.sql) to create the tables.
 
 The configuration file [`config/config.json`](https://github.com/eldriclim/GeekInsider-TAP/blob/master/config/config.json) has been intentionally added for your reference. Do update the values to match your local environment and add it to your `.gitignore` before running the server.
 

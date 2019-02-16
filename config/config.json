@@ -8,7 +8,7 @@
     "DB_PORT": 3306
   },
   "test": {
-    "PORT": 3000,
+    "PORT": 3030,
     "DB_HOST": "localhost",
     "DB_USER": "user",
     "DB_PASSWORD": "password",
