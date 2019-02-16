@@ -4,7 +4,9 @@ const Student = require('./../models/student');
 
 exports.register = async (req, res) => {
   try {
-    if (!req.body.teacher || !req.body.students) throw new Error('Missing inputs.');
+    if (!req.body.teacher || !req.body.students) throw new Error('Missing inputs');
+
+    if (typeof req.body.teacher !== 'string') throw new Error('Invalid teacher format');
 
     const teacher = new Teacher(req.body.teacher);
     const students = req.body.students.map(student => new Student(student));
@@ -37,7 +39,7 @@ exports.register = async (req, res) => {
 
 exports.commonstudents = async (req, res) => {
   try {
-    if (!req.query.teacher) throw new Error('Teacher input not found.');
+    if (!req.query.teacher) throw new Error('Teacher input not found');
 
     const params = (typeof req.query.teacher) === 'string' ? [req.query.teacher] : req.query.teacher;
     const tid = await Promise.all(params.map(async teacher => (new Teacher(teacher)).getID()));
