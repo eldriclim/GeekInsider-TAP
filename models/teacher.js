@@ -4,7 +4,7 @@ const { db } = require('./../db/mysql');
 
 class Teacher {
   constructor(email) {
-    if (!validator.isEmail(email)) throw new Error('Invalid email format.');
+    if (!validator.isEmail(email)) throw new Error(`Invalid email format: ${email}`);
 
     this.email = email;
   }

@@ -1,18 +1,15 @@
 const expect = require('expect');
-const { dbQuery, db } = require('./../helper/db_query');
+
+const { dbQuery, dbDeleteTable, dbCountTable } = require('./../helper/db.helper');
 const Student = require('./../../models/student');
 
 const student = new Student('example@email.com');
 
-afterEach(async () => {
-  await dbQuery('DELETE FROM Students');
-});
-
-after(() => {
-  db.end();
-});
-
 describe('Student model', () => {
+  afterEach(async () => {
+    await dbDeleteTable('Students');
+  });
+
   describe('#constructor', () => {
     it('should throw error when invalid email format', () => {
       expect(() => {
@@ -25,22 +22,20 @@ describe('Student model', () => {
     it('should insert new student', async () => {
       await student.insert();
 
-      expect((await dbQuery('SELECT * FROM Students')).length).toBe(1);
+      await expect(dbCountTable('Students')).resolves.toBe(1);
     });
   });
 
   describe('#getID', () => {
     it('should throw error when email not found', async () => {
-      console.log(await student.getID());
-
-      expect(student.getID()).resolves.toBeUndefined();
+      await expect(student.getID()).resolves.toBeUndefined();
     });
 
     it('should return student id', async () => {
       student.insert();
       const id = (await dbQuery(`SELECT sid FROM Students WHERE email = '${student.email}'`))[0].sid;
 
-      expect(student.getID()).resolves.toBe(id);
+      await expect(student.getID()).resolves.toBe(id);
     });
   });
 
@@ -49,24 +44,24 @@ describe('Student model', () => {
       expect(student.isSuspend()).rejects.toThrow('Email not found.');
     });
 
-    it('should return false at initial insert', () => {
+    it('should return false at initial insert', async () => {
       student.insert();
 
-      expect(student.isSuspend()).resolves.toBeFalsy();
+      await expect(student.isSuspend()).resolves.toBeFalsy();
     });
 
-    it('should return true after setting status true', () => {
+    it('should return true after setting status true', async () => {
       student.insert();
       student.setSuspend(true);
 
-      expect(student.isSuspend()).resolves.toBeTruthy();
+      await expect(student.isSuspend()).resolves.toBeTruthy();
     });
 
-    it('should return false after setting status false', () => {
+    it('should return false after setting status false', async () => {
       student.insert();
       student.setSuspend(false);
 
-      expect(student.isSuspend()).resolves.toBeFalsy();
+      await expect(student.isSuspend()).resolves.toBeFalsy();
     });
   });
 });

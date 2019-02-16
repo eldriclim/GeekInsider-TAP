@@ -10,6 +10,8 @@
   },
   "rules": {
     "comma-dangle": ["error", "never"],
-    "consistent-return": ["error", { "treatUndefinedAsUnspecified": true }]
+    "consistent-return": ["off"],
+    "no-unused-vars": ["warn"],
+    "no-new": ["warn"]
   }
 }
