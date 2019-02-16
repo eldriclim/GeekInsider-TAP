@@ -1,0 +1,24 @@
+DROP TABLE IF EXISTS Teacher_Student;
+DROP TABLE IF EXISTS Teacher;
+DROP TABLE IF EXISTS Student;
+
+CREATE TABLE IF NOT EXISTS Teachers (
+    tid INT AUTO_INCREMENT,
+    email VARCHAR(255) NOT NULL UNIQUE,
+    PRIMARY KEY (tid)
+);
+
+CREATE TABLE IF NOT EXISTS Students (
+    sid INT AUTO_INCREMENT,
+    email VARCHAR(255) NOT NULL UNIQUE,
+    isSuspend BOOLEAN DEFAULT FALSE,
+    PRIMARY KEY (sid)
+);
+
+CREATE TABLE IF NOT EXISTS Teacher_Student (
+	sid INT NOT NULL,
+    tid INT NOT NULL,
+    PRIMARY KEY (sid, tid),
+    FOREIGN KEY (sid) REFERENCES Students(sid),
+	FOREIGN KEY (tid) REFERENCES Teachers(tid)
+);

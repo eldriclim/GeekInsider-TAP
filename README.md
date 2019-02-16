@@ -9,7 +9,7 @@ MySQL 5 or greater is also required.
 
 ## Setting up
 
-To setup the environment, you have to first create a database and run [`SQL/createTable.sql`](https://github.com/eldriclim/GeekInsider-TAP/blob/master/SQL/createTable.sql) to create the tables.
+To setup the environment, you have to first create a database and run [`SQL/createTable.sql`](https://github.com/eldriclim/GeekInsider-TAP/blob/master/admin/sql/createTable.sql) to create the tables.
 
 The configuration file [`config/config.json`](https://github.com/eldriclim/GeekInsider-TAP/blob/master/config/config.json) has been intentionally added for your reference. Do update the values to match your local environment and add it to your `.gitignore` before running the server.
 
@@ -21,7 +21,7 @@ npm start
 
 ## Testing
 
-You are advised to create a seperate database and update [`config/config.json`](https://github.com/eldriclim/GeekInsider-TAP/blob/master/config/config.json) for testing. Postman collection exports are located in the [`postman`](https://github.com/eldriclim/GeekInsider-TAP/blob/master/postman) directory.
+You are advised to create a separate database and update [`config/config.json`](https://github.com/eldriclim/GeekInsider-TAP/blob/master/config/config.json) for testing. Postman collection exports are located in the [`postman`](https://github.com/eldriclim/GeekInsider-TAP/blob/master/admin/postman) directory.
 
 To run the test suite:
 ```bash
