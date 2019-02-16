@@ -1,0 +1,180 @@
+{
+	"info": {
+		"_postman_id": "10d3de80-871a-4422-9e35-47fa37a5a6a4",
+		"name": "GeekInsider-TAP",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "POST /api/register",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "5a000387-656b-48f6-a2d8-393d3a484382",
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"teacher\": \"teacher1@example.com\",\n\t\"students\":\n\t\t[\n\t\t\t\"student1@example.com\",\n\t\t\t\"student2@example.com\",\n\t\t\t\"student3@example.com\",\n\t\t\t\"student4@example.com\"\n\t\t]\n}"
+				},
+				"url": {
+					"raw": "{{url}}/api/register",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"api",
+						"register"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET /api/commonstudents",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "{{url}}/api/commonstudents?teacher=teacher1@example.com",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"api",
+						"commonstudents"
+					],
+					"query": [
+						{
+							"key": "teacher",
+							"value": "teacher1@example.com"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "POST /api/suspend",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"student\": \"student1@example.com\"\n}"
+				},
+				"url": {
+					"raw": "{{url}}/api/suspend",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"api",
+						"suspend"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "POST /api/retrievefornotifications",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"teacher\": \"teacher1@example.com\",\n\t\"notification\": \"Hi! @student5@example.com\"\n}"
+				},
+				"url": {
+					"raw": "{{url}}/api/retrievefornotifications",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"api",
+						"retrievefornotifications"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "View Tables",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "{{url}}/heroku/select",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"heroku",
+						"select"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete Tables",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "{{url}}/heroku/delete",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"heroku",
+						"delete"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
