@@ -31,7 +31,7 @@ class Student {
       WHERE email='${this.email}'`;
 
     return new Promise((resolve, reject) => {
-      db.query(input, (error, results) => {
+      db.query(input, (error) => {
         if (error) return reject(error);
 
         return resolve();
@@ -60,7 +60,7 @@ class Student {
     const input = `INSERT IGNORE INTO Students (email) VALUES ('${this.email}')`;
 
     return new Promise((resolve, reject) => {
-      db.query(input, (error, results) => {
+      db.query(input, (error) => {
         if (error) return reject(error);
 
         return resolve();

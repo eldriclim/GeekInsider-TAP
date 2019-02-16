@@ -3,10 +3,16 @@ const expect = require('expect');
 
 const { dbQuery } = require('./../../db/mysql');
 const { dbDeleteTable, dbCountTable } = require('./../helper/db.helper');
-const { teachers, students, populateTeachers, populateStudents, populateTeacherStudent } = require('./../seed');
 const Student = require('./../../models/student');
 const app = require('./../../app');
 
+const {
+  teachers,
+  students,
+  populateTeachers,
+  populateStudents,
+  populateTeacherStudent
+} = require('./../seed');
 
 const invalidEmail = 'example.com';
 
@@ -78,7 +84,6 @@ describe('Teacher controller', () => {
       });
 
       it('should throw error and not register when any invalid students email', (done) => {
-        const invalidEmail = 'example.com';
         request(app)
           .post('/api/register')
           .send({

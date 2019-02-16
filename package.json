@@ -4,7 +4,11 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "start": "node app.js",
     "test": "mocha test/**/*.test.js"
+  },
+  "engines": {
+    "node": "10.8.0"
   },
   "repository": {
     "type": "git",
