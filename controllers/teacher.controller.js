@@ -1,15 +1,18 @@
+const validator = require('validator');
+
 const { dbQuery } = require('./../db/mysql');
 const Teacher = require('./../models/teacher');
 const Student = require('./../models/student');
 
 exports.register = async (req, res) => {
+  let { teacher, students } = req.body;
   try {
-    if (!req.body.teacher || !req.body.students) throw new Error('Missing inputs');
+    if (!teacher || !students) throw new Error('Missing inputs');
 
-    if (typeof req.body.teacher !== 'string') throw new Error('Invalid teacher format');
+    if (typeof teacher !== 'string') throw new Error('Invalid teacher format');
 
-    const teacher = new Teacher(req.body.teacher);
-    const students = req.body.students.map(student => new Student(student));
+    teacher = new Teacher(teacher);
+    students = students.map(student => new Student(student));
 
     await teacher.insert();
     const tid = await teacher.getID();
@@ -36,11 +39,12 @@ exports.register = async (req, res) => {
 };
 
 exports.commonstudents = async (req, res) => {
+  const { teacher } = req.query;
   try {
-    if (!req.query.teacher) throw new Error('Teacher input not found');
+    if (!teacher) throw new Error('Teacher input not found');
 
-    const params = (typeof req.query.teacher) === 'string' ? [req.query.teacher] : req.query.teacher;
-    const tid = await Promise.all(params.map(async teacher => (new Teacher(teacher)).getID()));
+    const teachers = (typeof teacher) === 'string' ? [teacher] : teacher;
+    const tid = await Promise.all(teachers.map(async email => (new Teacher(email)).getID()));
 
     const common = {
       students: []
@@ -72,12 +76,13 @@ exports.commonstudents = async (req, res) => {
 };
 
 exports.suspend = async (req, res) => {
+  let { student } = req.body;
   try {
-    if (!req.body.student) throw new Error('Missing inputs');
+    if (!student) throw new Error('Missing inputs');
 
-    if (typeof req.body.student !== 'string') throw new Error('Invalid student format');
+    if (typeof student !== 'string') throw new Error('Invalid student format');
 
-    const student = new Student(req.body.student);
+    student = new Student(student);
 
     if (!(await student.getID())) throw new Error('No such student found');
 
@@ -93,6 +98,47 @@ exports.suspend = async (req, res) => {
   }
 };
 
-exports.retrievefornotifications = (req, res) => {
-    
+exports.retrievefornotifications = async (req, res) => {
+  const { notification, teacher } = req.body;
+
+  try {
+    if (!teacher || typeof notification === 'undefined') throw new Error('Missing inputs');
+    if (typeof teacher !== 'string' || typeof notification !== 'string') {
+      throw new Error('Invalid input format');
+    }
+
+    const tid = await ((new Teacher(teacher)).getID());
+    if (!tid) throw new Error('No such teacher found');
+
+    const emails = notification.split(' ')
+      .map(string => string.substring(1))
+      .filter(string => validator.isEmail(string));
+
+    const sid = (await Promise.all(
+      emails.map(email => ((new Student(email)).getID()))
+    )).filter(id => typeof id !== 'undefined');
+
+    const input = `
+      SELECT s1.email
+      FROM Students s1 LEFT JOIN Teacher_Student ts1 ON s1.sid = ts1.sid
+      WHERE s1.sid IN (${sid.join(',') || 'NULL'}) AND s1.isSuspend = FALSE
+
+      UNION
+
+      SELECT s2.email
+      FROM Teacher_Student ts2 LEFT JOIN Students s2 ON ts2.sid = s2.sid
+      WHERE ts2.tid = ${tid} AND s2.isSuspend = FALSE
+    `;
+
+    await dbQuery(input).then((results) => {
+      const recipients = results.map(row => row.email);
+      res.status(200).send({ recipients });
+    });
+  } catch (error) {
+    res
+      .status(400)
+      .send({
+        message: error.message
+      });
+  }
 };

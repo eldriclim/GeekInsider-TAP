@@ -4,6 +4,7 @@ const expect = require('expect');
 const { dbQuery } = require('./../../db/mysql');
 const { dbDeleteTable, dbCountTable } = require('./../helper/db.helper');
 const { teachers, students, populateTeachers, populateStudents, populateTeacherStudent } = require('./../seed');
+const Student = require('./../../models/student');
 const app = require('./../../app');
 
 
@@ -342,6 +343,170 @@ describe('Teacher controller', () => {
             expect(result[0].isSuspend).toBeTruthy();
             done();
           });
+      });
+    });
+  });
+
+  describe('POST /api/retrievefornotifications', () => {
+    describe('invalid input format', () => {
+      it('should throw error when no teacher input', (done) => {
+        request(app)
+          .post('/api/retrievefornotifications')
+          .send({
+            notification: 'hello world'
+          })
+          .expect(400)
+          .expect((res) => {
+            expect(res.body.message).toBe('Missing inputs');
+          })
+          .end(done);
+      });
+
+      it('should throw error when no student input', (done) => {
+        request(app)
+          .post('/api/retrievefornotifications')
+          .send({
+            teacher: teachers[0]
+          })
+          .expect(400)
+          .expect((res) => {
+            expect(res.body.message).toBe('Missing inputs');
+          })
+          .end(done);
+      });
+
+      it('should throw error when invalid teacher input format', (done) => {
+        request(app)
+          .post('/api/retrievefornotifications')
+          .send({
+            teacher: [teachers[0]],
+            notification: 'hello world'
+          })
+          .expect(400)
+          .expect((res) => {
+            expect(res.body.message).toBe('Invalid input format');
+          })
+          .end(done);
+      });
+
+      it('should throw error when invalid notification input format', (done) => {
+        request(app)
+          .post('/api/retrievefornotifications')
+          .send({
+            teacher: teachers[0],
+            notification: ['hello world']
+          })
+          .expect(400)
+          .expect((res) => {
+            expect(res.body.message).toBe('Invalid input format');
+          })
+          .end(done);
+      });
+
+      it('should throw error when invalid email format', (done) => {
+        request(app)
+          .post('/api/retrievefornotifications')
+          .send({
+            teacher: invalidEmail,
+            notification: 'hello world'
+          })
+          .expect(400)
+          .expect((res) => {
+            expect(res.body.message).toBe(`Invalid email format: ${invalidEmail}`);
+          })
+          .end(done);
+      });
+    });
+
+    describe('valid input format', () => {
+      before(populateStudents);
+      before(populateTeachers);
+      before(populateTeacherStudent);
+
+      after(async () => {
+        await dbDeleteTable('Teacher_Student');
+        await dbDeleteTable('Teachers');
+        await dbDeleteTable('Students');
+      });
+
+      describe('no explicit recipients', () => {
+        it('should show all students registered under teacher', (done) => {
+          request(app)
+            .post('/api/retrievefornotifications')
+            .send({
+              teacher: teachers[0],
+              notification: 'hello world'
+            })
+            .expect(200)
+            .expect((res) => {
+              expect(res.body.recipients).toEqual(students.slice(0, 4));
+            })
+            .end(done);
+        });
+
+        it('should show empty when teacher have no students', (done) => {
+          request(app)
+            .post('/api/retrievefornotifications')
+            .send({
+              teacher: teachers[4],
+              notification: 'hello world'
+            })
+            .expect(200)
+            .expect((res) => {
+              expect(res.body.recipients).toEqual([]);
+            })
+            .end(done);
+        });
+
+        it('should show empty when all students under teacher suspended', async () => {
+          await (new Student(students[5])).setSuspend(true);
+
+          await request(app)
+            .post('/api/retrievefornotifications')
+            .send({
+              teacher: teachers[3],
+              notification: 'hello world'
+            })
+            .expect(200)
+            .expect((res) => {
+              expect(res.body.recipients).toEqual([]);
+            });
+
+          await (new Student(students[5])).setSuspend(false);
+        });
+      });
+
+      describe('with explicit recipients', () => {
+        it('should show all students registered under teacher and those explicitly stated', (done) => {
+          request(app)
+            .post('/api/retrievefornotifications')
+            .send({
+              teacher: teachers[0],
+              notification: `hello world @${students[4]}`
+            })
+            .expect(200)
+            .expect((res) => {
+              expect(res.body.recipients.sort()).toEqual(students.slice(0, 5));
+            })
+            .end(done);
+        });
+
+        it('should show only registered under teacher when those explicitly stated are suspended', async () => {
+          await (new Student(students[4])).setSuspend(true);
+
+          await request(app)
+            .post('/api/retrievefornotifications')
+            .send({
+              teacher: teachers[0],
+              notification: `hello world @${students[4]}`
+            })
+            .expect(200)
+            .expect((res) => {
+              expect(res.body.recipients.sort()).toEqual(students.slice(0, 4));
+            });
+
+          await (new Student(students[4])).setSuspend(false);
+        });
       });
     });
   });

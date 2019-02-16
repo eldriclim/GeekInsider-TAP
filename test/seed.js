@@ -40,7 +40,7 @@ const populateStudents = async () => {
  * teachers[1] => students[2,3,4]
  * teachers[2] => students[3]
  * teachers[3] => students[5]
- * teachers[3] => null
+ * teachers[4] => null
  *
  */
 
