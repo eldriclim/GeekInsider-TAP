@@ -37,3 +37,20 @@ Additonal endpoint have been added for deployment purposes.
 
 #### DELETE /heroku/delete
 * Delete all rows in `Teachers`, `Students` and `Teacher_Students` table
+
+***
+
+## Personal Notes
+
+### Challenges
+1. Choice of node.js
+2. Deciding on mysql driver
+3. Supertest async db expect
+4. How does a production system looks like?
+
+
+### Improvements
+1. Use ORM
+2. Skinny controller
+3. Add service layer
+4. Isolate test with mocks and stubs
