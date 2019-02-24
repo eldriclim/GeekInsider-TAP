@@ -44,8 +44,8 @@ Additonal endpoint have been added for deployment purposes.
 
 ### Challenges
 1. Choice of node.js
-2. Deciding on mysql driver
-3. Supertest async db expect
+2. Deciding on MySQL driver
+3. Supertest with async test helper
 4. How does a production system looks like?
 
 
